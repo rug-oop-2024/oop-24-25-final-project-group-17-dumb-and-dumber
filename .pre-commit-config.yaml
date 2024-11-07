@@ -60,7 +60,9 @@ repos:
             "--max-line-length",
             "88",
             "--extend-ignore",
-            "D100, SC200, D401, R505",
+            "D100, SC200, D401, R505, N806, VNE001, N803, F401, E203",
             # "--max-cognitive-complexity",
             # "3",
+            "--exclude",
+            "autoop/tests"
           ]

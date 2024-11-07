@@ -12,6 +12,8 @@ from autoop.functional.preprocessing import preprocess_features
 
 
 class Pipeline:
+    """A pipeline for training and evaluating a model."""
+
     def __init__(
         self,
         metrics: List[Metric],
@@ -21,6 +23,7 @@ class Pipeline:
         target_feature: Feature,
         split=0.8,
     ):
+        """Initializes the pipeline."""
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -41,23 +44,25 @@ class Pipeline:
             )
 
     def __str__(self):
+        """Returns a string representation of the pipeline."""
         return f"""
-Pipeline(
-    model={self._model.type},
-    input_features={list(map(str, self._input_features))},
-    target_feature={str(self._target_feature)},
-    split={self._split},
-    metrics={list(map(str, self._metrics))},
-)
-"""
+            Pipeline(
+                model={self._model.type},
+                input_features={list(map(str, self._input_features))},
+                target_feature={str(self._target_feature)},
+                split={self._split},
+                metrics={list(map(str, self._metrics))},
+            )
+            """
 
     @property
     def model(self):
+        """Returns the model used in the pipeline."""
         return self._model
 
     @property
     def artifacts(self) -> List[Artifact]:
-        """Used to get the artifacts generated during the pipeline execution to be saved"""
+        """Returns artifacts generated during the pipeline execution."""
         artifacts = []
         for name, artifact in self._artifacts.items():
             artifact_type = artifact.get("type")
@@ -83,22 +88,26 @@ Pipeline(
         return artifacts
 
     def _register_artifact(self, name: str, artifact):
+        """Register an artifact generated during the pipeline execution."""
         self._artifacts[name] = artifact
 
     def _preprocess_features(self):
-        (target_feature_name, target_data, artifact) = preprocess_features(
+        """Preprocess the features in the dataset."""
+        target_feature_name, target_data, artifact = preprocess_features(
             [self._target_feature], self._dataset
         )[0]
         self._register_artifact(target_feature_name, artifact)
         input_results = preprocess_features(self._input_features, self._dataset)
-        for feature_name, data, artifact in input_results:
+        for feature_name, _data, artifact in input_results:
             self._register_artifact(feature_name, artifact)
         # Get the input vectors and output vector, sort by feature name for consistency
         self._output_vector = target_data
-        self._input_vectors = [data for (feature_name, data, artifact) in input_results]
+        self._input_vectors = [
+            data for (_feature_name, data, _artifact) in input_results
+        ]
 
     def _split_data(self):
-        # Split the data into training and testing sets
+        """Split the data into training and testing sets."""
         split = self._split
         self._train_X = [
             vector[: int(split * len(vector))] for vector in self._input_vectors
@@ -110,14 +119,17 @@ Pipeline(
         self._test_y = self._output_vector[int(split * len(self._output_vector)) :]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
+        """Concatenate the input vectors into a single matrix."""
         return np.concatenate(vectors, axis=1)
 
     def _train(self):
+        """Train the model on the training set."""
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
         self._model.fit(X, Y)
 
     def _evaluate(self):
+        """Evaluate the model on the test set."""
         X = self._compact_vectors(self._test_X)
         Y = self._test_y
         self._metrics_results = []
@@ -127,7 +139,8 @@ Pipeline(
             self._metrics_results.append((metric, result))
         self._predictions = predictions
 
-    def execute(self):
+    def execute(self) -> dict:
+        """Executes the pipeline."""
         self._preprocess_features()
         self._split_data()
         self._train()

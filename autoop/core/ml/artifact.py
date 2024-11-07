@@ -2,24 +2,27 @@
 import base64  # noqa
 from abc import ABC, abstractmethod
 
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel, Field, PrivateAttr
 
 
 class Artifact(BaseModel, ABC):
     """The abstract class for any data artifact."""
+
+    name: str
+    data: bytes
 
     _name: str = PrivateAttr(default_factory=str)
     _asset_path: str = PrivateAttr(default_factory=str)
     _data: bytes = PrivateAttr(default_factory=bytes)
     _version: str = PrivateAttr(default_factory=str)
 
-    def __init__(self, name: str, asset_path: str, data: bytes, version: str, **kwargs):
+    def __init__(self, **data):
         """Initialises the Artifact object."""
-        super().__init__(**kwargs)
-        self._name = name
-        self._asset_path = asset_path
-        self._data = data
-        self._version = version
+        super().__init__(**data)
+        self._name = self.name
+        self._asset_path = self.asset_path
+        self._data = data.get("data", b"")
+        self._version = data.get("version", "1.0.0")
 
     @abstractmethod
     def read(self):

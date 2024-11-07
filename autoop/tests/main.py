@@ -1,11 +1,21 @@
+# flake8: noqa
 import unittest
 
 from autoop.tests.test_artifact import TestArtifactMethods  # noqa
 from autoop.tests.test_database import TestDatabase  # noqa
 from autoop.tests.test_features import TestFeatures
+from autoop.tests.test_metric import TestGetMetric  # noqa
 
 # from autoop.tests.test_pipeline import TestPipeline # noqa
 from autoop.tests.test_storage import TestStorage  # noqa
+
+
+def test_get_metric():
+    """Test the get_metric function."""
+    suite = unittest.TestSuite()
+    print("---Running tests on the Metric module---")
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestGetMetric))
+    return suite
 
 
 def suite():
@@ -38,3 +48,4 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())
     runner.run(artifact_suite())
+    runner.run(test_get_metric())

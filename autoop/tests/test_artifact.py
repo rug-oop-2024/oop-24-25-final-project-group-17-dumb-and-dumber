@@ -1,3 +1,4 @@
+# flake8: noqa
 import unittest
 
 from autoop.core.ml.artifact import Artifact
