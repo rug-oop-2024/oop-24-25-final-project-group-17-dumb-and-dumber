@@ -58,7 +58,7 @@ class KNearestNeighbors(Model):
         """
         
         # Find the distance between the test point and all the training points.
-        obs = self.parameters["observations"]
+        obs = self.coefficients["observations"]
         distances = [self._distance(observation, pt) for pt in obs]
 
         # Convert the distances to a numpy array. # noqa: SC100
@@ -68,7 +68,7 @@ class KNearestNeighbors(Model):
         nearest_indices = distances.argsort()[: self.k]
 
         # Get the ground truths of the k nearest points.
-        nearest_classes = np.array(self.parameters["ground_truths"])[
+        nearest_classes = np.array(self.coefficients["ground_truths"])[
             nearest_indices
         ]  # noqa
 

@@ -42,7 +42,7 @@ class Model(Artifact):
     
     # -------- GETTERS -------- #
     @property
-    def parameters(self) -> dict:
+    def coefficients(self) -> dict:
         """Returns the parameters of the model."""
         return deepcopy(self._parameters)
     
@@ -52,8 +52,8 @@ class Model(Artifact):
         return deepcopy(self._hyper_params)
     
     # -------- SETTERS -------- #
-    @parameters.setter
-    def parameters(self, parameters: dict) -> None:
+    @coefficients.setter
+    def coefficients(self, parameters: dict) -> None:
         """Sets the parameters of the model."""
         if not isinstance(parameters, dict):
             raise TypeError("parameters must be a dictionary")
