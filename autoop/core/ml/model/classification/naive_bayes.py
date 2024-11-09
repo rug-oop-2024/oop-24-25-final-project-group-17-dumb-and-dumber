@@ -1,18 +1,21 @@
-from autoop.core.ml.model.model import Model
-
-from sklearn.linear_model import LinearRegression
+from sklearn.naive_bayes import GaussianNB
 import numpy as np
+from autoop.core.ml.model import Model
 
+class NaiveBayesModel(Model):
+    """
+    A naive Bayes model from scikit-learn.
 
-class MultipleLinearRegression(Model):
-    """A multiple linear regression model from scikit-learn."""
-
+    I have no idea how this works. 
+    so we probably shouldnt use it rn.
+    """
+    
     def __init__(self):
         """Initializes the model."""
-        self._model = LinearRegression()
+        self._model = GaussianNB()
 
     def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
-        """Fits the model."""	
+        """Fits the model."""
         self._parameters = {
             "observations": observations,
             "ground_truth": ground

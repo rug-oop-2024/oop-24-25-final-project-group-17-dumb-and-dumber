@@ -1,21 +1,22 @@
-from autoop.core.ml.model.model import Model
+from autoop.core.ml.model import Model
 
-from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
 
-class MultipleLinearRegression(Model):
-    """A multiple linear regression model from scikit-learn."""
+class KNearestNeighbors(Model):
+    """A K-nearest neighbors classifier model from scikit-learn."""
 
-    def __init__(self):
+    def __init__(self, n_neighbors: int = 5):
         """Initializes the model."""
-        self._model = LinearRegression()
+        super().__init()
+        self._model = KNeighborsClassifier(n_neighbors=n_neighbors)
 
     def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
-        """Fits the model."""	
+        """Fits the model."""
         self._parameters = {
             "observations": observations,
-            "ground_truth": ground
+            "ground_truth": ground,
         }
         self._model.fit(observations, ground)
 

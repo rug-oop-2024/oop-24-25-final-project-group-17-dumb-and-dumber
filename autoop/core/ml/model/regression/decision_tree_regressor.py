@@ -1,18 +1,22 @@
 from autoop.core.ml.model.model import Model
 
-from sklearn.linear_model import LinearRegression
+from sklearn import tree
 import numpy as np
 
+class DecisionTreeRegressorModel(Model):
+    """
+    A decision tree regressor model from scikit-learn.
+    
+    Read this: https://scikit-learn.org/1.5/modules/tree.html
+    """
 
-class MultipleLinearRegression(Model):
-    """A multiple linear regression model from scikit-learn."""
-
-    def __init__(self):
+    def __init__(self, max_depth: int = None):
         """Initializes the model."""
-        self._model = LinearRegression()
+        super().__init__()
+        self._model = tree.DecisionTreeRegressor(max_depth=max_depth)
 
     def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
-        """Fits the model."""	
+        """Fits the model."""
         self._parameters = {
             "observations": observations,
             "ground_truth": ground
@@ -21,6 +25,4 @@ class MultipleLinearRegression(Model):
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """Predicts the target variable for the given input data."""
-        predictions = self._model.predict(X)
-        self._parameters["predictions"] = predictions
-        return predictions
+        return self._model.predict(X)

@@ -64,6 +64,7 @@ class Pipeline:
     def artifacts(self) -> List[Artifact]:
         """Returns artifacts generated during the pipeline execution."""
         artifacts = []
+        artifact: Artifact
         for name, artifact in self._artifacts.items():
             artifact_type = artifact.get("type")
             if artifact_type in ["OneHotEncoder"]:
@@ -98,12 +99,12 @@ class Pipeline:
         )[0]
         self._register_artifact(target_feature_name, artifact)
         input_results = preprocess_features(self._input_features, self._dataset)
-        for feature_name, _data, artifact in input_results:
+        for feature_name, _, artifact in input_results:
             self._register_artifact(feature_name, artifact)
         # Get the input vectors and output vector, sort by feature name for consistency
         self._output_vector = target_data
         self._input_vectors = [
-            data for (_feature_name, data, _artifact) in input_results
+            data for (_, data, _) in input_results
         ]
 
     def _split_data(self):
@@ -128,7 +129,7 @@ class Pipeline:
         Y = self._train_y
         self._model.fit(X, Y)
 
-    def _evaluate(self):
+    def  _evaluate(self):
         """Evaluate the model on the test set."""
         X = self._compact_vectors(self._test_X)
         Y = self._test_y

@@ -1,6 +1,7 @@
 # TODO: We need to implement the save and read methods.
 import base64  # noqa
 from abc import ABC, abstractmethod
+from typing import Literal
 
 from pydantic import BaseModel, Field, PrivateAttr
 
@@ -32,6 +33,16 @@ class Artifact(BaseModel, ABC):
     @abstractmethod
     def save(self):
         """Saves the data of the artifact."""
+        pass
+
+    #TODO: Implement the get method.
+    def get(self) -> Literal["OneHotEncoder", "StandardScaler"]:
+        """
+        Get something in the artifact.
+
+        Example:
+            artifact_type = artifact.get("type")
+        """
         pass
 
     # -------- GETTERS -------- # noqa

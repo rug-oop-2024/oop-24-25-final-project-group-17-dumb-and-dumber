@@ -24,7 +24,9 @@ def detect_feature_types(dataset: Dataset) -> List[Feature]:
 
     # 1.
     if not isinstance(dataset, Dataset):
-        raise TypeError("dataset must be of type Dataset")
+        raise TypeError(
+            f"dataset must be of type Dataset, not {dataset.__class__.__name__}"
+            )
     data = dataset.read()
 
     # 2.

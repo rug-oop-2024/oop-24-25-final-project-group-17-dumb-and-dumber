@@ -81,6 +81,7 @@ class Database():
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")
         for key in keys:
+            print(key)
             collection, id = key.split("/")[-2:]
             if not self._data.get(collection, id):
                 self._storage.delete(f"{collection}/{id}")

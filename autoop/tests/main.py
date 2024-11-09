@@ -30,6 +30,13 @@ def suite():
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFeatures))
     return suite
 
+def database_suite():
+    """Database test suite."""
+    suite = unittest.TestSuite()
+    print("---Running tests on the Database module---")
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestDatabase))
+    return suite
+
 
 def artifact_suite():
     """Artifact test suite."""
@@ -49,3 +56,4 @@ if __name__ == "__main__":
     runner.run(suite())
     runner.run(artifact_suite())
     runner.run(test_get_metric())
+    runner.run(database_suite())
