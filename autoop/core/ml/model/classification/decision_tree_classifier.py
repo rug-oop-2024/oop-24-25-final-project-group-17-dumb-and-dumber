@@ -1,14 +1,37 @@
 from autoop.core.ml.model import Model
 from sklearn import tree
+from typing import Literal
 import numpy as np
 
 class DecisionTree(Model):
     """A decision tree classifier model from scikit-learn."""
 
-    def __init__(self):
+    def __init__(
+            self, 
+            criterion: Literal["gini", "entropy"] = "gini", 
+            max_depth: int = None,
+            min_samples_split: int = 2,
+            min_samples_leaf: int = 1,
+            max_features: Literal["auto", "sqrt", "log2"] = "sqrt",
+            ):
         """Initializes the model."""
-        super().__init()
-        self._clf = tree.DecisionTreeClassifier()
+        super().__init__()
+
+        self._hyper_params = {
+            "criterion": criterion,
+            "max_depth": max_depth,
+            "min_samples_split": min_samples_split,
+            "min_samples_leaf": min_samples_leaf,
+            "max_features": max_features,
+        }
+
+        self._clf = tree.DecisionTreeClassifier(
+            criterion=criterion, 
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            max_features=max_features,
+            )
 
     def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
         """Fits the model."""

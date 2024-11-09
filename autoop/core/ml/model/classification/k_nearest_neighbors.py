@@ -1,18 +1,18 @@
 from autoop.core.ml.model import Model
-from pydantic import Field
+from pydantic import PrivateAttr
 import numpy as np
 
 
 class KNearestNeighbors(Model):
     """A K-nearest neighbors classifier model from assignment 1."""
 
-    k: int = Field(5, description="The number of neighbors to consider.")
+    _k: int = PrivateAttr()
 
     def __init__(self, n_neighbors: int = 5):
         """Initializes the model."""
         super().__init__()
 
-        self.k = n_neighbors
+        self._k = n_neighbors
 
         self._hyper_params = {
             "n_neighbors": n_neighbors,
@@ -65,7 +65,7 @@ class KNearestNeighbors(Model):
         distances = np.array(distances)
 
         # Sort the distances and find the k nearest point's indices.
-        nearest_indices = distances.argsort()[: self.k]
+        nearest_indices = distances.argsort()[: self._k]
 
         # Get the ground truths of the k nearest points.
         nearest_classes = np.array(self.coefficients["ground_truths"])[
