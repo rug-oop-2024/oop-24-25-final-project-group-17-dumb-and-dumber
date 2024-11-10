@@ -1,5 +1,4 @@
 import io
-from abc import ABC, abstractmethod
 
 import pandas as pd
 
@@ -9,9 +8,10 @@ from autoop.core.ml.artifact import Artifact
 class Dataset(Artifact):
     """The class for a dataset artifact."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initializes the Dataset object."""
-        super().__init__(type="dataset",  *args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self._type = "dataset"
 
     @staticmethod
     def from_dataframe(
@@ -24,16 +24,14 @@ class Dataset(Artifact):
             data=data.to_csv(index=False).encode(),
             version=version,
         )
-    
+
     @staticmethod
     def from_artifact(artifact: Artifact) -> "Dataset":
         """Convert an Artifact instance to a Dataset instance if possible."""
         if artifact.type != "dataset":
-            raise ValueError(f"Cannot convert artifact of type '{artifact.type}' to Dataset.")
-        
-        # Decode the data from bytes to a DataFrame
-        data_str = artifact.read().decode()  # Assumes the artifact data is CSV-encoded in bytes
-        data = pd.read_csv(io.StringIO(data_str))
+            raise ValueError(
+                f"Cannot convert artifact of type '{artifact.type}' to Dataset."
+            )
 
         return Dataset(
             name=artifact.name,

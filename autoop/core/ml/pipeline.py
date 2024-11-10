@@ -1,16 +1,17 @@
 import pickle
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 
 from autoop.functional.preprocessing import preprocess_features
 
 if TYPE_CHECKING:
-    from autoop.core.ml.model.model import Model
     from autoop.core.ml.artifact import Artifact
     from autoop.core.ml.dataset import Dataset
     from autoop.core.ml.feature import Feature
     from autoop.core.ml.metric import Metric
+    from autoop.core.ml.model.model import Model
+
 
 class Pipeline:
     """A pipeline for training and evaluating a model."""
@@ -104,9 +105,7 @@ class Pipeline:
             self._register_artifact(feature_name, artifact)
         # Get the input vectors and output vector, sort by feature name for consistency
         self._output_vector = target_data
-        self._input_vectors = [
-            data for (_, data, _) in input_results
-        ]
+        self._input_vectors = [data for (_, data, _) in input_results]
 
     def _split_data(self):
         """Split the data into training and testing sets."""
@@ -130,7 +129,7 @@ class Pipeline:
         Y = self._train_y
         self._model.fit(X, Y)
 
-    def  _evaluate(self):
+    def _evaluate(self):
         """Evaluate the model on the test set."""
         X = self._compact_vectors(self._test_X)
         Y = self._test_y
@@ -140,6 +139,28 @@ class Pipeline:
             result = metric.evaluate(predictions, Y)
             self._metrics_results.append((metric, result))
         self._predictions = predictions
+
+    def _save(self, name: str, version: str = "1.0.0") -> "Artifact":
+        """Save the pipeline."""
+        pipeline_data = {
+            "dataset": self._dataset,
+            "model": self._model,
+            "input_features": self._input_features,
+            "target_feature": self._target_feature,
+            "split": self._split,
+            "metrics": self._metrics,
+        }
+
+        pipeline_data = pickle.dumps(pipeline_data)
+        path = f"{name}_{version}.pkl"
+
+        return Artifact(
+            type="pipeline",
+            name=name,
+            data=pipeline_data,
+            version=version,
+            asset_path=path,
+        )
 
     def execute(self) -> dict:
         """Executes the pipeline."""

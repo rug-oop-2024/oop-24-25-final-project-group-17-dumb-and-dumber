@@ -1,12 +1,9 @@
-from typing import TYPE_CHECKING, List
-
 import pandas as pd
 import streamlit as st
 
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
-from autoop.core.ml.feature import Feature
-from autoop.core.ml.metric import METRICS, Metric, get_metric
+from autoop.core.ml.metric import METRICS, get_metric
 from autoop.core.ml.model.classification.decision_tree_classifier import (
     DecisionTreeClassifier,
 )
@@ -32,7 +29,7 @@ def write_helper_text(text: str):
 
 
 def initialize_session_state():
-    """Initialize the session state variables."""
+    """Initialize the session state variabless."""
     if "confirmed" not in st.session_state:
         st.session_state.confirmed = False
     if "selected_dataset" not in st.session_state:
@@ -443,6 +440,22 @@ def build_pipeline():
         predictions = results["predictions"]
         predictions_df = pd.DataFrame(predictions).T
         st.dataframe(predictions_df, height=100, width=800)
+
+        # Save the pipeline
+        pipeline_name = st.text_input("Enter Pipeline Name:", key="pipeline_name_input")
+        pipeline_version = st.text_input(
+            "Enter Pipeline Version:", key="pipeline_version_input"
+        )
+        if st.button("Save Pipeline", key="save_pipeline_button"):
+            if pipeline_name:
+                pipeline_artifact = pipeline._save(pipeline_name, pipeline_version)
+                automl.registry.register(pipeline_artifact)
+                st.success(
+                    f"Pipeline '{pipeline_name}' \
+                           saved and registered successfully."
+                )
+            else:
+                st.warning("Please provide a name for the pipeline.")
 
     except Exception as e:
         st.error(f"An error occurred during training: {e}")
