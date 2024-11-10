@@ -1,9 +1,9 @@
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 
 import numpy as np
 from sklearn import tree
 
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.model import Model
 
 
 class DecisionTreeClassifier(Model):

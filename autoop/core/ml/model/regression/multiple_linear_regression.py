@@ -16,6 +16,9 @@ class MultipleLinearRegression(Model):
             "n_features_in": None,
         }
 
+    def initialize(self, hyper_params: dict) -> None:
+        pass
+
     def fit(self, observations: np.ndarray, ground_truths: np.ndarray) -> None:
         """
         Fit the model with observations and ground truths.

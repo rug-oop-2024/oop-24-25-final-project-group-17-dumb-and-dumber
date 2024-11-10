@@ -15,7 +15,7 @@ class Model(Artifact):
     _hyper_params: dict = PrivateAttr(default={})
     _model_attrs: dict = PrivateAttr(default={})
     _type: Literal["classification", "regression"] = PrivateAttr()
-
+    
     def to_artifact(self, name: str, model: Any) -> Artifact:
         """Convert the model to an artifact."""
         pass

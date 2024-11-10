@@ -19,6 +19,8 @@ class Artifact(BaseModel, ABC):
     _asset_path: str = PrivateAttr(default_factory=str)
     _data: bytes = PrivateAttr(default_factory=bytes)
     _version: str = PrivateAttr(default_factory=str)
+    _tags: list[str] = PrivateAttr(default_factory=list)
+    _metadata: dict[str, str] = PrivateAttr(default_factory=dict[str,str])
 
     def __init__(self, **data):
         """Initialises the Artifact object."""
@@ -28,16 +30,16 @@ class Artifact(BaseModel, ABC):
         self._asset_path = data.get("asset_path", "")
         self._data = data.get("data", b"")
         self._version = data.get("version", "1.0.0")
+        self._tags = data.get("tags", [])
+        self._metadata = data.get("metadata", dict())
 
-    @abstractmethod
     def read(self):
         """Reads the data of the artifact."""
         return self._data
 
-    @abstractmethod
-    def save(self):
+    def save(self, data: bytes):
         """Saves the data of the artifact."""
-        pass
+        self._data = data
 
     # TODO: Implement the get method.
     def get(self) -> Literal["OneHotEncoder", "StandardScaler"]:
@@ -50,6 +52,10 @@ class Artifact(BaseModel, ABC):
         pass
 
     # -------- GETTERS -------- # noqa
+    @property
+    def id(self) -> str:
+        """ID of the artifact."""
+        return str(base64.b64encode(self.asset_path.encode())) + self.version
 
     @property
     def name(self) -> str:
@@ -65,6 +71,21 @@ class Artifact(BaseModel, ABC):
     def version(self) -> str:
         """Return the version of the artifact."""
         return self._version
+    
+    @property
+    def tags(self) -> list[str]:
+        """Return the tags of the artifact."""
+        return self._tags
+    
+    @property
+    def metadata(self) -> dict[str, str]:
+        """Return the metadata of the artifact."""
+        return self._metadata
+    
+    @property
+    def type(self) -> str:
+        """Return the type of the artifact."""
+        return self._type
 
     # -------- SETTERS --------
 

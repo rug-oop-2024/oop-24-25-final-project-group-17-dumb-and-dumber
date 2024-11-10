@@ -1,4 +1,5 @@
 import numpy as np
+from typing import TYPE_CHECKING
 from pydantic import PrivateAttr
 
 from autoop.core.ml.model import Model

@@ -1,26 +1,27 @@
 import pickle
-from typing import List
+from typing import List, TYPE_CHECKING
 
 import numpy as np
 
-from autoop.core.ml.artifact import Artifact
-from autoop.core.ml.dataset import Dataset
-from autoop.core.ml.feature import Feature
-from autoop.core.ml.metric import Metric
-from autoop.core.ml.model import Model
 from autoop.functional.preprocessing import preprocess_features
 
+if TYPE_CHECKING:
+    from autoop.core.ml.model.model import Model
+    from autoop.core.ml.artifact import Artifact
+    from autoop.core.ml.dataset import Dataset
+    from autoop.core.ml.feature import Feature
+    from autoop.core.ml.metric import Metric
 
 class Pipeline:
     """A pipeline for training and evaluating a model."""
 
     def __init__(
         self,
-        metrics: List[Metric],
-        dataset: Dataset,
-        model: Model,
-        input_features: List[Feature],
-        target_feature: Feature,
+        metrics: List["Metric"],
+        dataset: "Dataset",
+        model: "Model",
+        input_features: List["Feature"],
+        target_feature: "Feature",
         split=0.8,
     ):
         """Initializes the pipeline."""
@@ -61,7 +62,7 @@ class Pipeline:
         return self._model
 
     @property
-    def artifacts(self) -> List[Artifact]:
+    def artifacts(self) -> List["Artifact"]:
         """Returns artifacts generated during the pipeline execution."""
         artifacts = []
         artifact: Artifact

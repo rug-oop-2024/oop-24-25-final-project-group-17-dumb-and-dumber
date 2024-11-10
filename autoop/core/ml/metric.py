@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-
+from enum import Enum
 import numpy as np
 
 METRICS = [

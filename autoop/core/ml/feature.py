@@ -22,13 +22,10 @@ class Feature(BaseModel):
         self._type = feature_type
 
     def __str__(self):
-        """
-        Returns the Feature object as a str.
-
-        Example:
-            Feature(name='col_name', type='col_type')
-        """
-        return f"Feature(name='{self._name}', type='{self._type}')"
+        """Returns the Feature object as a str."""
+        
+        feature_type_display = self.feature_type.capitalize()
+        return f"{self.name} ({feature_type_display})"
 
     # -------- GETTERS -------- # noqa
 

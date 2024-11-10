@@ -47,6 +47,10 @@ class LassoRegression(Model):
             "selection": selection,
         }
 
+    def initialize(self, hyper_params: dict) -> None:
+        """Initializes the model with hyper-parameters."""
+        self._model = Lasso(**hyper_params)
+
     def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
         """
         Fits the model.
