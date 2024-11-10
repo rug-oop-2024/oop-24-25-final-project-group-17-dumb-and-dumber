@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any
 from enum import Enum
+from typing import Any
+
 import numpy as np
 
 METRICS = [
@@ -20,10 +21,6 @@ def get_metric(name: str):
 
     Args:
         name (str): Name of the metric. One of the METRICS.
-
-    Currently only two metrics are supported:
-        - mean_squared_error
-        - accuracy
     """
     # Factory function to get a metric by name.
     # Return a metric instance given its str name.
@@ -58,6 +55,10 @@ class Metric(ABC):
     def evaluate(self, ground_truth: np.ndarray, predics: np.ndarray) -> float:
         """Evaluate the metric."""
         return self(ground_truth, predics)
+
+    def __str__(self):
+        """Return the name of the metric."""
+        return self.__class__.__name__
 
 
 # concrete implementations of the Metric class

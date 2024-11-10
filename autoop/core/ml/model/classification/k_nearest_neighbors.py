@@ -1,8 +1,9 @@
-import numpy as np
 from typing import TYPE_CHECKING
+
+import numpy as np
 from pydantic import PrivateAttr
 
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.model import Model
 
 
 class KNearestNeighbors(Model):

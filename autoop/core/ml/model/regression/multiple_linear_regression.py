@@ -6,7 +6,7 @@ from autoop.core.ml.model.model import Model
 class MultipleLinearRegression(Model):
     """A multiple linear regression model from assignment 1."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initializes the model and parents."""
         super().__init__()
         self._type = "regression"
@@ -15,9 +15,6 @@ class MultipleLinearRegression(Model):
             "fitted": False,
             "n_features_in": None,
         }
-
-    def initialize(self, hyper_params: dict) -> None:
-        pass
 
     def fit(self, observations: np.ndarray, ground_truths: np.ndarray) -> None:
         """

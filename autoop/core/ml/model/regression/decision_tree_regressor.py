@@ -18,7 +18,7 @@ class DecisionTreeRegressor(Model):
         max_depth: int = None,
         criterion: Literal[
             "squared_error", "friedman_mse", "absolute_error", "poisson"
-        ] = "mse",
+        ] = "squared_error",
         splitter: Literal["best", "random"] = "best",
         min_samples_split: int = 2,
         min_samples_leaf: int = 1,
@@ -64,7 +64,9 @@ class DecisionTreeRegressor(Model):
             "feature_importances": self._model.feature_importances_,
             "max_features": self._model.max_features_,
             "n_features_in_fit": self._model.n_features_in_,
-            "feature_names_in_fit": self._model.feature_names_in_,
+            "feature_names_in_fit": self._model.feature_names_in_
+            if isinstance(self._model, np.ndarray)
+            else None,
         }  # TODO: possibly get the tree itself?
 
     def predict(self, observations: np.ndarray) -> np.ndarray:

@@ -78,7 +78,9 @@ class LassoRegression(Model):
             if isinstance(self._model.dual_gap_, float)
             else None,
             "n_features_in": getattr(self._model, "feature_names_in_", None),
-            "feature_names_in": self._model.feature_names_in_,
+            "feature_names_in": self._model.feature_names_in_
+            if isinstance(self._model, np.ndarray)
+            else None,
         }
 
     def predict(self, observations: np.ndarray) -> np.ndarray:

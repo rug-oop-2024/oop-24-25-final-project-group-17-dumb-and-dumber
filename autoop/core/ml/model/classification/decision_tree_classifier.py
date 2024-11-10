@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 from sklearn import tree
@@ -51,12 +51,6 @@ class DecisionTreeClassifier(Model):
         """
         super().fit(observations, ground)
 
-        # Ensure ground is 1-dimensional (for a single-target classifier)
-        if ground.ndim != 1:
-            raise ValueError(
-                "The ground array must be 1-dimensional for classification."
-            )
-
         self._clf.fit(observations, ground)
 
         # Capture model attributes
@@ -66,6 +60,9 @@ class DecisionTreeClassifier(Model):
             "max_features": self._clf.max_features_,
             "n_classes": self._clf.n_classes_,
             "n_features_in_fit": self._clf.n_features_in_,
+            "feature_names_in_fit": self._clf.feature_names_in_
+            if isinstance(self._clf, np.ndarray)
+            else None,
         }  # TODO: possibly get the tree itself?
 
     def predict(self, observations: np.ndarray) -> np.ndarray:

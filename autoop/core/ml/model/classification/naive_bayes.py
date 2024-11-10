@@ -2,7 +2,7 @@ import numpy as np
 from pydantic import PrivateAttr
 from sklearn.naive_bayes import GaussianNB
 
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.model import Model
 
 
 class NaiveBayes(Model):
