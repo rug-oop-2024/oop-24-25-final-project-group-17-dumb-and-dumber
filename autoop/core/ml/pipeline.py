@@ -1,14 +1,16 @@
 import pickle
-from typing import List
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 
-from autoop.core.ml.artifact import Artifact
-from autoop.core.ml.dataset import Dataset
-from autoop.core.ml.feature import Feature
-from autoop.core.ml.metric import Metric
-from autoop.core.ml.model import Model
 from autoop.functional.preprocessing import preprocess_features
+
+if TYPE_CHECKING:
+    from autoop.core.ml.artifact import Artifact
+    from autoop.core.ml.dataset import Dataset
+    from autoop.core.ml.feature import Feature
+    from autoop.core.ml.metric import Metric
+    from autoop.core.ml.model.model import Model
 
 
 class Pipeline:
@@ -16,11 +18,11 @@ class Pipeline:
 
     def __init__(
         self,
-        metrics: List[Metric],
-        dataset: Dataset,
-        model: Model,
-        input_features: List[Feature],
-        target_feature: Feature,
+        metrics: List["Metric"],
+        dataset: "Dataset",
+        model: "Model",
+        input_features: List["Feature"],
+        target_feature: "Feature",
         split=0.8,
     ):
         """Initializes the pipeline."""
@@ -61,9 +63,10 @@ class Pipeline:
         return self._model
 
     @property
-    def artifacts(self) -> List[Artifact]:
+    def artifacts(self) -> List["Artifact"]:
         """Returns artifacts generated during the pipeline execution."""
         artifacts = []
+        artifact: Artifact
         for name, artifact in self._artifacts.items():
             artifact_type = artifact.get("type")
             if artifact_type in ["OneHotEncoder"]:
@@ -98,13 +101,11 @@ class Pipeline:
         )[0]
         self._register_artifact(target_feature_name, artifact)
         input_results = preprocess_features(self._input_features, self._dataset)
-        for feature_name, _data, artifact in input_results:
+        for feature_name, _, artifact in input_results:
             self._register_artifact(feature_name, artifact)
         # Get the input vectors and output vector, sort by feature name for consistency
         self._output_vector = target_data
-        self._input_vectors = [
-            data for (_feature_name, data, _artifact) in input_results
-        ]
+        self._input_vectors = [data for (_, data, _) in input_results]
 
     def _split_data(self):
         """Split the data into training and testing sets."""
@@ -138,6 +139,28 @@ class Pipeline:
             result = metric.evaluate(predictions, Y)
             self._metrics_results.append((metric, result))
         self._predictions = predictions
+
+    def _save(self, name: str, version: str = "1.0.0") -> "Artifact":
+        """Save the pipeline."""
+        pipeline_data = {
+            "dataset": self._dataset,
+            "model": self._model,
+            "input_features": self._input_features,
+            "target_feature": self._target_feature,
+            "split": self._split,
+            "metrics": self._metrics,
+        }
+
+        pipeline_data = pickle.dumps(pipeline_data)
+        path = f"{name}_{version}.pkl"
+
+        return Artifact(
+            type="pipeline",
+            name=name,
+            data=pipeline_data,
+            version=version,
+            asset_path=path,
+        )
 
     def execute(self) -> dict:
         """Executes the pipeline."""

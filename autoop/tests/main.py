@@ -3,11 +3,26 @@ import unittest
 
 from autoop.tests.test_artifact import TestArtifactMethods  # noqa
 from autoop.tests.test_database import TestDatabase  # noqa
-from autoop.tests.test_features import TestFeatures
+from autoop.tests.test_features import TestFeatures  # noqa
 from autoop.tests.test_metric import TestGetMetric  # noqa
-
-# from autoop.tests.test_pipeline import TestPipeline # noqa
+from autoop.tests.test_pipeline import TestPipeline  # noqa
 from autoop.tests.test_storage import TestStorage  # noqa
+
+
+def storage_suite():
+    """Storage test suite."""
+    suite = unittest.TestSuite()
+    print("---Running tests on the Storage module---")
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestStorage))
+    return suite
+
+
+def pipleline_suite():
+    """Pipeline test suite."""
+    suite = unittest.TestSuite()
+    print("---Running tests on the Pipeline module---")
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPipeline))
+    return suite
 
 
 def test_get_metric():
@@ -18,16 +33,11 @@ def test_get_metric():
     return suite
 
 
-def suite():
-    """
-    Return a test suite.
-
-    We create a test suite that only runs the test we want it to run.
-    You add test with the addTest() method after initializing the suite.
-    """
+def database_suite():
+    """Database test suite."""
     suite = unittest.TestSuite()
-    print("---Running tests on the Feature module---")
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFeatures))
+    print("---Running tests on the Database module---")
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestDatabase))
     return suite
 
 
@@ -46,6 +56,8 @@ if __name__ == "__main__":
     We first instantiate a unittest runner and then run the suite.
     """
     runner = unittest.TextTestRunner()
-    runner.run(suite())
-    runner.run(artifact_suite())
+    runner.run(storage_suite())
+    runner.run(pipleline_suite())
     runner.run(test_get_metric())
+    runner.run(database_suite())
+    runner.run(artifact_suite())

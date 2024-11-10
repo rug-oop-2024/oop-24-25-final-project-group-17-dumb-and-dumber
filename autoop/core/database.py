@@ -1,11 +1,12 @@
-
+# flake8: noqa
 import json
-from typing import Dict, Tuple, List, Union
+import os
+from typing import Dict, List, Tuple, Union
 
 from autoop.core.storage import Storage
 
-class Database():
 
+class Database:
     def __init__(self, storage: Storage):
         self._storage = storage
         self._data = {}
@@ -40,7 +41,7 @@ class Database():
         if not self._data.get(collection, None):
             return None
         return self._data[collection].get(id, None)
-    
+
     def delete(self, collection: str, id: str):
         """Delete a key from the database
         Args:
@@ -76,22 +77,24 @@ class Database():
             if not data:
                 continue
             for id, item in data.items():
-                self._storage.save(json.dumps(item).encode(), f"{collection}/{id}")
+                self._storage.save(
+                    json.dumps(item).encode(), f"{collection}{os.sep}{id}"
+                )
 
         # for things that were deleted, we need to remove them from the storage
-        keys = self._storage.list("")
+        keys = self._storage.list_paths("")
         for key in keys:
-            collection, id = key.split("/")[-2:]
+            collection, id = key.split(os.sep)[-2:]
             if not self._data.get(collection, id):
-                self._storage.delete(f"{collection}/{id}")
-    
+                self._storage.delete(f"{collection}{os.sep}{id}")
+
     def _load(self):
         """Load the data from storage"""
         self._data = {}
-        for key in self._storage.list(""):
-            collection, id = key.split("/")[-2:]
-            data = self._storage.load(f"{collection}/{id}")
+        for key in self._storage.list_paths(""):
+            collection, item_id = key.split(os.sep)[-2:]
+            data = self._storage.load(f"{collection}{os.sep}{item_id}")
             # Ensure the collection exists in the dictionary
             if collection not in self._data:
                 self._data[collection] = {}
-            self._data[collection][id] = json.loads(data.decode())
+            self._data[collection][item_id] = json.loads(data.decode())
