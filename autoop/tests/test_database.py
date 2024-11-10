@@ -1,12 +1,13 @@
+# flake8: noqa
+import random
+import tempfile
 import unittest
 
 from autoop.core.database import Database
 from autoop.core.storage import LocalStorage
-import random
-import tempfile
+
 
 class TestDatabase(unittest.TestCase):
-
     def setUp(self):
         self.storage = LocalStorage(tempfile.mkdtemp())
         self.db = Database(self.storage)
@@ -50,3 +51,11 @@ class TestDatabase(unittest.TestCase):
         self.db.set("collection", key, value)
         # collection should now contain the key
         self.assertIn((key, value), self.db.list("collection"))
+
+
+def main():
+    unittest.main()
+
+
+if __name__ == "__main__":
+    main()
