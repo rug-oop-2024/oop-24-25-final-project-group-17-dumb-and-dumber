@@ -1,9 +1,9 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Any, Literal
-from pydantic import PrivateAttr
 
 import numpy as np
+from pydantic import PrivateAttr
 
 from autoop.core.ml.artifact import Artifact
 
@@ -13,20 +13,46 @@ class Model(Artifact):
 
     _parameters: dict = PrivateAttr(default={})
     _hyper_params: dict = PrivateAttr(default={})
+    _model_attrs: dict = PrivateAttr(default={})
 
     def to_artifact(self, name: str, model: Any) -> Artifact:
         """Convert the model to an artifact."""
         pass
 
-    @abstractmethod
-    def predict(self, data: np.ndarray) -> np.ndarray:
-        """Predict the target variable for the given input data."""
-        pass
+    def fit(self, observations: np.ndarray, ground: np.ndarray) -> None:
+        """
+        Fit the model.
 
-    @abstractmethod
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
-        """Fit the model."""
-        pass
+        Arguments:
+            observations: np.ndarray: The observations to fit the model with.
+            ground: np.ndarray: The ground truths to fit the model with.
+        """
+        # Check if observations and ground have compatible shapes
+        if observations.shape[0] != ground.shape[0]:
+            raise ValueError(
+                "The number of samples in observations and ground_truth must match."
+            )
+
+        self._parameters = {
+            "observations": observations,
+            "ground_truth": ground,
+        }
+
+    def predict(self, observations: np.ndarray) -> np.ndarray:
+        """
+        Predict the target variable for the given input data.
+
+        Arguments:
+            observations: np.ndarray: The input data to predict the target variable for.
+
+        Returns:
+            np.ndarray: The predicted target variable.
+        """
+        # Check that the model has been fitted
+        if "observations" not in self._parameters:
+            raise ValueError(
+                "The model has not been fitted yet. Please call fit() before predict()."
+            )
 
     def save(self) -> None:
         """Save the model."""
@@ -39,18 +65,23 @@ class Model(Artifact):
         # TODO: Implement the read method.
         # Or in the artifact class
         pass
-    
-    # -------- GETTERS -------- #
+
+    # -------- GETTERS -------- # noqa
     @property
     def coefficients(self) -> dict:
         """Returns the parameters of the model."""
         return deepcopy(self._parameters)
-    
+
     @property
     def hyper_params(self) -> dict:
         """Returns the hyper-parameters of the model."""
         return deepcopy(self._hyper_params)
-    
+
+    @property
+    def model_attrs(self) -> dict:
+        """Returns the model attributes."""
+        return deepcopy(self._model_attrs)
+
     # -------- SETTERS -------- #
     @coefficients.setter
     def coefficients(self, parameters: dict) -> None:
@@ -65,4 +96,3 @@ class Model(Artifact):
         if not isinstance(hyper_params, dict):
             raise TypeError("hyper_params must be a dictionary")
         self._hyper_params = hyper_params
-    

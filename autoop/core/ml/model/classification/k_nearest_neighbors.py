@@ -1,6 +1,7 @@
-from autoop.core.ml.model import Model
-from pydantic import PrivateAttr
 import numpy as np
+from pydantic import PrivateAttr
+
+from autoop.core.ml.model import Model
 
 
 class KNearestNeighbors(Model):
@@ -26,9 +27,14 @@ class KNearestNeighbors(Model):
             observations: np.ndarray: The observations to fit the model with.
             ground_truths: np.ndarray: The ground truths to fit the model with.
         """
-        self._parameters = {
+        super().fit(observations, ground)
+
+        # Count occurrences of each class in ground_truths
+        unique_classes, counts = np.unique(ground, return_counts=True)
+        classes = dict(zip(unique_classes, counts))
+        self._model_attrs = {
+            "classes": classes,
             "observations": observations,
-            "ground_truth": ground,
         }
 
     def predict(self, observations: np.ndarray) -> np.ndarray:
@@ -41,10 +47,11 @@ class KNearestNeighbors(Model):
         Returns:
             np.ndarray: The predicted outcomes.
         """
+        super().predict(observations)
         return np.array(
             [self._predict(observation) for observation in observations]
         )  # noqa
-    
+
     def _predict(self, observation: np.ndarray) -> int:
         """
         Predict the classification of a single observation.
@@ -56,7 +63,6 @@ class KNearestNeighbors(Model):
         Returns:
             np.ndarray: The predicted classification.
         """
-        
         # Find the distance between the test point and all the training points.
         obs = self.coefficients["observations"]
         distances = [self._distance(observation, pt) for pt in obs]
@@ -74,7 +80,7 @@ class KNearestNeighbors(Model):
 
         # Take the average of the k nearest points (their classifications).
         return np.round(nearest_classes.mean())
-    
+
     def _distance(self, pt1: np.ndarray, pt2: np.ndarray) -> float:
         """
         Calculate the Euclidean distance between two points.
