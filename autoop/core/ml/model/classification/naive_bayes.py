@@ -22,6 +22,7 @@ class NaiveBayes(Model):
             all features to add to variances for calculation stability.
         """
         super().__init__()
+        self._type = "classification"
         self._model = GaussianNB(priors=priors, var_smoothing=var_smoothing)
         self._hyper_params = {
             "priors": priors,

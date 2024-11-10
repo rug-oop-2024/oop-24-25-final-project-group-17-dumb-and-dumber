@@ -26,6 +26,7 @@ class LassoRegression(Model):
     ):
         """Initializes the model."""
         super().__init__()
+        self._type = "regression"
         self._model = Lasso(
             alpha=alpha,
             fit_intercept=fit_intercept,

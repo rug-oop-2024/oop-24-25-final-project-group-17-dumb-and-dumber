@@ -23,6 +23,7 @@ class DecisionTreeClassifier(Model):
     ):
         """Initializes the model."""
         super().__init__()
+        self._type = "classification"
 
         self._hyper_params = {
             "criterion": criterion,

@@ -9,10 +9,13 @@ from pydantic import BaseModel, Field, PrivateAttr
 class Artifact(BaseModel, ABC):
     """The abstract class for any data artifact."""
 
-    name: str
-    data: bytes
+    # Public attributes for initialization
+    name: str = Field("", title="Name of the artifact")
+    data: bytes = Field(b"")
 
+    # Private attributes for internal use
     _name: str = PrivateAttr(default_factory=str)
+    _type: str = PrivateAttr(default_factory=str)
     _asset_path: str = PrivateAttr(default_factory=str)
     _data: bytes = PrivateAttr(default_factory=bytes)
     _version: str = PrivateAttr(default_factory=str)
@@ -21,7 +24,8 @@ class Artifact(BaseModel, ABC):
         """Initialises the Artifact object."""
         super().__init__(**data)
         self._name = self.name
-        self._asset_path = self.asset_path
+        self._type = data.get("type", "")
+        self._asset_path = data.get("asset_path", "")
         self._data = data.get("data", b"")
         self._version = data.get("version", "1.0.0")
 
@@ -35,7 +39,7 @@ class Artifact(BaseModel, ABC):
         """Saves the data of the artifact."""
         pass
 
-    #TODO: Implement the get method.
+    # TODO: Implement the get method.
     def get(self) -> Literal["OneHotEncoder", "StandardScaler"]:
         """
         Get something in the artifact.

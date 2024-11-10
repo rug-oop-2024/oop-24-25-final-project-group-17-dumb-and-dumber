@@ -4,11 +4,12 @@ from autoop.core.ml.model.model import Model
 
 
 class MultipleLinearRegression(Model):
-    """A multiple linear regression model from scikit-learn."""
+    """A multiple linear regression model from assignment 1."""
 
     def __init__(self):
         """Initializes the model and parents."""
         super().__init__()
+        self._type = "regression"
         self._model_attrs = {
             "coefficients": None,
             "fitted": False,

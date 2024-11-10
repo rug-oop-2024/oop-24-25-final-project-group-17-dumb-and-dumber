@@ -27,6 +27,7 @@ class DecisionTreeRegressor(Model):
     ):
         """Initializes the model."""
         super().__init__()
+        self._type = "regression"
         self._model = tree.DecisionTreeRegressor(
             max_depth=max_depth,
             criterion=criterion,

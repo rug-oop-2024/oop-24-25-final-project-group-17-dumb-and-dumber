@@ -12,6 +12,7 @@ class KNearestNeighbors(Model):
     def __init__(self, n_neighbors: int = 5):
         """Initializes the model."""
         super().__init__()
+        self._type = "classification"
 
         self._k = n_neighbors
 

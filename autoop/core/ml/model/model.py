@@ -14,6 +14,7 @@ class Model(Artifact):
     _parameters: dict = PrivateAttr(default={})
     _hyper_params: dict = PrivateAttr(default={})
     _model_attrs: dict = PrivateAttr(default={})
+    _type: Literal["classification", "regression"] = PrivateAttr()
 
     def to_artifact(self, name: str, model: Any) -> Artifact:
         """Convert the model to an artifact."""
@@ -82,6 +83,11 @@ class Model(Artifact):
         """Returns the model attributes."""
         return deepcopy(self._model_attrs)
 
+    @property
+    def type(self) -> Literal["classification", "regression"]:
+        """Returns the type of the model."""
+        return self._type
+
     # -------- SETTERS -------- #
     @coefficients.setter
     def coefficients(self, parameters: dict) -> None:
@@ -89,10 +95,3 @@ class Model(Artifact):
         if not isinstance(parameters, dict):
             raise TypeError("parameters must be a dictionary")
         self._parameters = parameters
-
-    @hyper_params.setter
-    def hyper_params(self, hyper_params: dict) -> None:
-        """Sets the hyper-parameters of the model."""
-        if not isinstance(hyper_params, dict):
-            raise TypeError("hyper_params must be a dictionary")
-        self._hyper_params = hyper_params
