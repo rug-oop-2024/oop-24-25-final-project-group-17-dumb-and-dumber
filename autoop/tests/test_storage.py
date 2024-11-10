@@ -6,7 +6,6 @@ import unittest
 
 from autoop.core.storage import LocalStorage, NotFoundError
 
-
 class TestStorage(unittest.TestCase):
     def setUp(self):
         temp_dir = tempfile.mkdtemp()
